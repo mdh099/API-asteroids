@@ -1,6 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const mongoose = require('mongoose');   // Added mongoose
+
 
 const app = express();
 
@@ -34,8 +36,17 @@ if (process.env.NODE_ENV === 'production')
           });
     }
 
-// Adding Login API
-// Complete, returns userID and email. 
+//-----------------------------------------------------------------------------------------
+// MONGOOSE stuff
+const Schema = mongoose.Schema;
+const ObjectId = Schema.ObjectId;
+
+//const MyModel = mongoose.model('User', Schema);
+
+
+
+//-----------------------------------------------------------------------------------------
+
 app.post('/api/login', async (req, res, next) => 
 {
   // incoming: login, password
@@ -112,51 +123,50 @@ app.post('/api/addcard', async (req, res, next) =>
 });
 
 // Not complete. 
-// app.post('/api/editaccount', async (req, res, next) => 
-// {
-//   // incoming: Username, Password, email, 
-//   // (maybe not) outgoing: id, error 
-//   const { login, password, email } = req.body;
+app.post('/api/editaccount', async (req, res, next) => 
+{
+  // incoming: Username, Password, email, 
+  // (maybe not) outgoing: id, error 
+  const { login, password, email } = req.body;
   
-//   // Currently does not allow you to change your username. Only email, and password. 
-//   // var username = '';
-//   var newEmail = email;
-//   var newPassword = password;
+  // Currently does not allow you to change your username. Only email, and password. 
+  // var username = '';
+  var newEmail = email;
+  var newPassword = password;
 
-//   // const newUser = {Username:login, Password:password, email:email};
-//   const updatedUser = {Username:login, Password:password, email:email}; 
+  // const newUser = {Username:login, Password:password, email:email};
+  const updatedUser = {Username:login, Password:password, email:email}; 
   
-//   // var userID = -1;
-//   var error = '';
+  // var userID = -1;
+  var error = '';
 
-//   try 
-//   {
-//     const db = client.db();
-//     const result = await db.collection('Users').find({Username:login,Password:password}).toArray();
-//     result = updatedUser; 
-//   }
-//   catch(e)
-//   {
-//     error = e.toString();
-//   }
+  try 
+  {
+    const db = client.db();
+    const result = await db.collection('Users').find({Username:login,Password:password}).toArray();
+    result = updatedUser; 
+  }
+  catch(e)
+  {
+    error = e.toString();
+  }
 
-//   if( results.length > 0 )
-//   {
-//     userID = results[0].userID;
-//     username = results[0].Username;
-//     email = results[0].email;
-//     // used to be userID = results[0]._id;
-//   }
+  if( results.length > 0 )
+  {
+    userID = results[0].userID;
+    username = results[0].Username;
+    email = results[0].email;
+    // used to be userID = results[0]._id;
+  }
 
-//   var ret = { userID:userID, username:username, email: email, error:''};
-//   res.status(200).json(ret);
+  var ret = { userID:userID, username:username, email: email, error:''};
+  res.status(200).json(ret);
 
-//   var ret = { error: error/*, userID:userID*/};
+  var ret = { error: error/*, userID:userID*/};
 
-//   // Now it neads to 
-//   res.status(200).json(ret);
-// });
-//
+  // Now it neads to 
+  res.status(200).json(ret);
+});
 
 app.post('/api/searchcards', async (req, res, next) => 
 {
